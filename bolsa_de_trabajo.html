@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolsa de Trabajo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: auto;
+      padding: 1rem;
+    }
+    img.responsive {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .boton-principal {
+      display: inline-block;
+      background: linear-gradient(to right, #4a90e2, #007aff);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      margin: 1rem auto;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .boton-enviar {
+      display: inline-block;
+      background: linear-gradient(to right, #4a90e2, #007aff);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      margin: 1rem auto;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .boton-link {
+      display: inline-block;
+      background: linear-gradient(to right, #4a90e2, #007aff);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: 0.5rem auto;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: #004080;
+    }
+    .tarjeta {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .accordion {
+      background-color: #0d47a1;
+      border: 2px solid #0d47a1;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 10px;
+      color: white;
+    }
+    .accordion-header {
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .accordion-content {
+      display: none;
+      margin-top: 10px;
+      background-color: #e3f2fd;
+      color: #333;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .captcha-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mensaje-exito {
+      color: green;
+      text-align: center;
+      margin: 1rem 0;
+    }
+    footer {
+      font-size: 0.9rem;
+      background-color: #e8eaf6;
+      padding: 2rem;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://github.com/dajecapo/BOLSADETRABAJO/blob/main/portadabolsa.jpg?raw=true" alt="Portada" class="responsive">
+    <img src="https://github.com/dajecapo/BOLSADETRABAJO/blob/main/DIRECCION%20LOGO.jpg?raw=true" alt="Logo Ayuntamiento" class="responsive">
+    <h1><a href="https://www.merida.gob.mx/empleo/" class="boton-principal">Bolsa de Trabajo</a></h1>
+    <h2>Registro de solicitantes</h2>
+  </header>
+
+  <main class="contenedor">
+    <!-- contenido omitido por brevedad -->
+  </main>
+
+  <footer>
+    Derechos reservados Ayuntamiento de Mérida 2025<br>
+    HORARIOS DE ATENCIÓN: Lunes a viernes de 8:00 a.m. a 3:00 p.m.<br>
+    Teléfono: (999) 928 69 77 Ext. 81533, 81534
+  </footer>
+
+  <script>
+    let n1, n2;
+    function generarCaptcha() {
+      n1 = Math.floor(Math.random() * 9) + 1;
+      n2 = Math.floor(Math.random() * 9) + 1;
+      document.getElementById("captchaTexto").innerText = `${n1} + ${n2} =`;
+    }
+
+    function toggleAccordion(el) {
+      const content = el.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      generarCaptcha();
+      document.getElementById("formulario").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const respuesta = parseInt(document.getElementById("captchaRespuesta").value);
+        if (respuesta !== n1 + n2) {
+          alert("Captcha incorrecto. Intenta de nuevo.");
+          generarCaptcha();
+          return;
+        }
+        const data = new FormData(this);
+        fetch("https://script.google.com/macros/s/AKfycbxeWp0-hpwZT-7ZoTXGH3HgkExrd8R3PF5qakN6tosc1dAgnlwsFgMLbCD5zXXO1u98/exec", {
+          method: "POST",
+          body: data
+        })
+        .then(res => res.text())
+        .then(res => {
+          if (res === "OK") {
+            const msg = document.getElementById("mensajeExito");
+            msg.textContent = "👍 Gracias, registro exitoso. ⏳ Redirigiendo al inicio... 🎉 Te contactaremos pronto.";
+            this.reset();
+            generarCaptcha();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => msg.textContent = "", 5000);
+          } else {
+            alert("Error al enviar. Inténtalo más tarde.");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
