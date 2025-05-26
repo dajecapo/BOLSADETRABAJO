@@ -134,7 +134,54 @@
   </header>
 
   <main class="contenedor">
-    <!-- contenido omitido por brevedad -->
+    <section class="tarjeta">
+      <h2>Información del Programa</h2>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Cuándo y dónde hay bolsas de trabajo?</div><div class="accordion-content">Haz clic en el botón de abajo “Próximos eventos”.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Dónde se hacen las bolsas de trabajo?</div><div class="accordion-content">En la ficha informativa de “Próximos eventos” puedes hallar esa información.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Qué empresas ofrecen empleos?</div><div class="accordion-content">Varían en cada evento, pero hay empresas locales y transnacionales.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Cómo me entero cuándo hay las bolsas de trabajo?</div><div class="accordion-content">Estar siempre atento a las publicaciones de la Dirección de Prosperidad y Bienestar Económico en la página de Facebook, en la del Ayuntamiento o desde los enlaces de aquí.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Qué debo llevar para participar?</div><div class="accordion-content">Te recomendamos llevar varias currículas o solicitudes de empleo (5 o 6 en cada evento).</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿En qué consisten las bolsas de trabajo?</div><div class="accordion-content">Luego de que te registres en este espacio, podrás recorrer las mesas instaladas y los representantes de las empresas te entrevistarán.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿Puedo adjuntar mi currículum vitae?</div><div class="accordion-content">Sí, regístrate primero e inicia sesión en <a href="https://geoportal.merida.gob.mx/empleo/" target="_blank">https://geoportal.merida.gob.mx/empleo/</a>.</div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">¿En cuánto tiempo obtendré respuesta?</div><div class="accordion-content">Varía según el acuerdo con cada empresa.</div></div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Formulario de Registro</h2>
+      <form id="formulario">
+        <input type="text" name="nombre_completo" placeholder="Nombre completo" required>
+        <input type="number" name="edad" placeholder="Edad" required>
+        <input type="tel" name="telefono" placeholder="Teléfono (10 dígitos)" pattern="\d{10}" required>
+        <input type="email" name="email" placeholder="Correo electrónico" required>
+        <select name="sexo" required>
+          <option value="">Selecciona sexo</option>
+          <option value="Femenino">Femenino</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" name="empleo_requerido" placeholder="Empleo requerido" required>
+        <div class="captcha-container">
+          <label id="captchaTexto"></label>
+          <input type="number" id="captchaRespuesta" placeholder="Resultado" required>
+        </div>
+        <button class="boton-enviar" type="submit">Enviar registro</button>
+        <div class="mensaje-exito" id="mensajeExito"></div>
+      </form>
+    </section>
+
+    <a class="boton-link" href="https://www.merida.gob.mx/avisoprivacidad/" target="_blank">Aviso de privacidad</a>
+
+    <section class="tarjeta">
+      <h3>#Para ciudadanos</h3>
+      <a class="boton-link" href="https://www.merida.gob.mx/empleo/" target="_blank">Próximos eventos</a>
+      <a class="boton-link" href="https://geoportal.merida.gob.mx/empleo/" target="_blank">Encuentra empleo aquí</a>
+      <a class="boton-link" href="https://www.google.com.mx/maps/place/DIRECCION+DE+PROSPERIDAD+Y+BIENESTAR+ECON%C3%93MICO/" target="_blank">Ubicación de la Dirección</a>
+    </section>
+
+    <section class="tarjeta">
+      <h3>##Para empresas</h3>
+      <a class="boton-link" href="https://geoportal.merida.gob.mx/empleo/empresa/login" target="_blank">Publica aquí tus vacantes</a>
+    </section>
   </main>
 
   <footer>
@@ -146,9 +193,11 @@
   <script>
     let n1, n2;
     function generarCaptcha() {
+      const captchaLabel = document.getElementById("captchaTexto");
+      if (!captchaLabel) return;
       n1 = Math.floor(Math.random() * 9) + 1;
       n2 = Math.floor(Math.random() * 9) + 1;
-      document.getElementById("captchaTexto").innerText = `${n1} + ${n2} =`;
+      captchaLabel.innerText = `${n1} + ${n2} =`;
     }
 
     function toggleAccordion(el) {
@@ -158,7 +207,10 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       generarCaptcha();
-      document.getElementById("formulario").addEventListener("submit", function(e) {
+      const form = document.getElementById("formulario");
+      if (!form) return;
+
+      form.addEventListener("submit", function(e) {
         e.preventDefault();
         const respuesta = parseInt(document.getElementById("captchaRespuesta").value);
         if (respuesta !== n1 + n2) {
@@ -173,16 +225,19 @@
         })
         .then(res => res.text())
         .then(res => {
+          const msg = document.getElementById("mensajeExito");
           if (res === "OK") {
-            const msg = document.getElementById("mensajeExito");
             msg.textContent = "👍 Gracias, registro exitoso. ⏳ Redirigiendo al inicio... 🎉 Te contactaremos pronto.";
-            this.reset();
+            form.reset();
             generarCaptcha();
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => msg.textContent = "", 5000);
           } else {
-            alert("Error al enviar. Inténtalo más tarde.");
+            msg.textContent = "Error al enviar. Inténtalo más tarde.";
           }
+        })
+        .catch(error => {
+          alert("Error de conexión: " + error.message);
         });
       });
     });
