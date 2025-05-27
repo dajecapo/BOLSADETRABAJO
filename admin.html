@@ -10,8 +10,6 @@
     th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 14px; }
     th { background-color: #007acc; color: white; }
     select, button { padding: 5px; font-size: 14px; }
-    .success { color: green; }
-    .error { color: red; }
   </style>
 </head>
 <body>
@@ -19,7 +17,8 @@
   <table id="tabla"></table>
 
   <script>
-    const TOKEN = "admin2025";  // Token actualizado correctamente
+    const TOKEN = "admin2025";
+    const CLAVE_PANEL = "bolsatrabajo2025";
 
     function cargarDatos() {
       fetch("https://script.google.com/macros/s/AKfycbxeWp0-hpwZT-7ZoTXGH3HgkExrd8R3PF5qakN6tosc1dAgnlwsFgMLbCD5zXXO1u98/exec?tipo=admin")
@@ -61,7 +60,16 @@
       .catch(err => alert("Error: " + err));
     }
 
-    cargarDatos();
+    // Protección con contraseña al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+      const pass = prompt("🔐 Ingresa la contraseña para acceder al panel:");
+      if (pass === CLAVE_PANEL) {
+        cargarDatos();
+      } else {
+        alert("❌ Contraseña incorrecta. Acceso denegado.");
+        document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Acceso denegado</h2>";
+      }
+    });
   </script>
 </body>
 </html>
