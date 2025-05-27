@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Administración - Bolsa de Trabajo</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; margin: 0; padding: 2rem; }
+    h1 { color: #333; text-align: center; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 14px; }
+    th { background-color: #007acc; color: white; }
+    select, button { padding: 5px; font-size: 14px; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Panel de Administración</h1>
+  <table id="tabla"></table>
+
+  <script>
+    const TOKEN = "MI_TOKEN_SECRETO";
+
+    function cargarDatos() {
+      fetch("https://script.google.com/macros/s/AKfycbxeWp0-hpwZT-7ZoTXGH3HgkExrd8R3PF5qakN6tosc1dAgnlwsFgMLbCD5zXXO1u98/exec?tipo=admin")
+        .then(res => res.json())
+        .then(data => {
+          const tabla = document.getElementById("tabla");
+          let html = "<tr><th>Nombre</th><th>Teléfono</th><th>Empleo</th><th>Estatus</th><th>Acción</th></tr>";
+          data.forEach((item, i) => {
+            html += `
+              <tr>
+                <td>${item.nombre_completo}</td>
+                <td>${item.telefono}</td>
+                <td>${item.empleo_requerido}</td>
+                <td>
+                  <select id="estatus-${i}">
+                    <option${item.estatus === "En proceso" ? " selected" : ""}>En proceso</option>
+                    <option${item.estatus === "Rechazado" ? " selected" : ""}>Rechazado</option>
+                    <option${item.estatus === "Empleado" ? " selected" : ""}>Empleado</option>
+                  </select>
+                </td>
+                <td>
+                  <button onclick="actualizarEstatus('${item.telefono}', document.getElementById('estatus-${i}').value)">Actualizar</button>
+                </td>
+              </tr>
+            `;
+          });
+          tabla.innerHTML = html;
+        });
+    }
+
+    function actualizarEstatus(telefono, nuevoEstatus) {
+      fetch("https://script.google.com/macros/s/AKfycbxeWp0-hpwZT-7ZoTXGH3HgkExrd8R3PF5qakN6tosc1dAgnlwsFgMLbCD5zXXO1u98/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `accion=actualizar&telefono=${encodeURIComponent(telefono)}&estatus=${encodeURIComponent(nuevoEstatus)}&token=${TOKEN}`
+      })
+      .then(res => res.text())
+      .then(res => alert(res))
+      .catch(err => alert("Error: " + err));
+    }
+
+    cargarDatos();
+  </script>
+</body>
+</html>
